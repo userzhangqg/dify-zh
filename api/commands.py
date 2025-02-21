@@ -649,3 +649,60 @@ where sites.id is null limit 1000"""
                 break
 
     click.echo(click.style("Fix for missing app-related sites completed successfully!", fg="green"))
+
+
+@click.command("export-users", help="Export user list and status")
+@click.option("--format", default="csv", help="Export format (csv or excel)")
+def export_users(format):
+    """
+    Export user list and status to CSV or Excel file
+    """
+    from models import Account
+    import pandas as pd
+    
+    # Query all accounts
+    accounts = db.session.query(Account).all()
+    
+    # Prepare data
+    data = []
+    for account in accounts:
+        data.append({
+            "id": account.id,
+            "email": account.email,
+            "name": account.name,
+            "status": account.status,
+            "created_at": account.created_at,
+            "last_login_at": account.last_login_at
+        })
+    
+    # Convert to DataFrame
+    df = pd.DataFrame(data)
+    
+    # Export based on format
+    if format == "csv":
+        df.to_csv("users.csv", index=False)
+        click.echo(click.style("Exported users to users.csv", fg="green"))
+    elif format == "excel":
+        df.to_excel("users.xlsx", index=False) 
+        click.echo(click.style("Exported users to users.xlsx", fg="green"))
+    else:
+        click.echo(click.style("Invalid format. Use csv or excel", fg="red"))
+
+
+@click.command("list-users", help="List all users")
+def list_users():
+    """
+    List all users with their status
+    """
+    from models import Account
+    
+    # Query all accounts
+    accounts = db.session.query(Account).all()
+    
+    # Print table header
+    click.echo(f"{'ID':<40}{'Email':<30}{'Name':<20}{'Status':<10}{'Last Login':<20}")
+    click.echo("-" * 130)
+    
+    # Print each account
+    for account in accounts:
+        click.echo(f"{account.id:<40}{account.email:<30}{account.name:<20}{account.status:<10}{str(account.last_login_at or ''):<20}")

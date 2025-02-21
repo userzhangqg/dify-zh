@@ -12,6 +12,8 @@ def init_app(app: DifyApp):
         reset_password,
         upgrade_db,
         vdb_migrate,
+        export_users,
+        list_users
     )
 
     cmds_to_register = [
@@ -24,6 +26,8 @@ def init_app(app: DifyApp):
         create_tenant,
         upgrade_db,
         fix_app_site_missing,
+        export_users,
+        list_users
     ]
     for cmd in cmds_to_register:
         app.cli.add_command(cmd)
