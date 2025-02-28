@@ -28,6 +28,8 @@ from models.account import Tenant, TenantStatus
 from services.account_service import TenantService
 from services.file_service import FileService
 from services.workspace_service import WorkspaceService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 provider_fields = {
     "provider_name": fields.String,
@@ -135,6 +137,7 @@ class SwitchWorkspaceApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PostSwitchWorkspaceApi")
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("tenant_id", type=str, required=True, location="json")
@@ -158,6 +161,7 @@ class CustomConfigWorkspaceApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("workspace_custom")
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PostCustomConfigWorkspaceApi")
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("remove_webapp_brand", type=bool, location="json")
@@ -184,6 +188,7 @@ class WebappLogoWorkspaceApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("workspace_custom")
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PostWebappLogoWorkspaceApi")
     def post(self):
         # get file from request
         file = request.files["file"]

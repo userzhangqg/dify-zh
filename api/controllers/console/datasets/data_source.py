@@ -17,6 +17,8 @@ from libs.login import login_required
 from models import DataSourceOauthBinding, Document
 from services.dataset_service import DatasetService, DocumentService
 from tasks.document_indexing_sync_task import document_indexing_sync_task
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class DataSourceApi(Resource):
@@ -73,6 +75,7 @@ class DataSourceApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PatchDataSourceApi")
     def patch(self, binding_id, action):
         binding_id = str(binding_id)
         action = str(action)
@@ -183,6 +186,7 @@ class DataSourceNotionApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PostDataSourceNotionApi")
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("notion_info_list", type=list, required=True, nullable=True, location="json")

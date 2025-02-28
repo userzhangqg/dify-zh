@@ -1,10 +1,12 @@
 from typing import cast
-
+import logging
 import flask_login  # type: ignore
-from flask import request
+from flask import request, g
 from flask_restful import Resource, reqparse  # type: ignore
 
 import services
+from models.audit_log import AuditActionType
+from core.audit.audit import audit_log
 from configs import dify_config
 from constants.languages import languages
 from controllers.console import api
@@ -38,6 +40,7 @@ class LoginApi(Resource):
     """Resource for user login."""
 
     @setup_required
+    @audit_log(action_type=AuditActionType.LOGIN, action_details="User login")
     def post(self):
         """Authenticate user and login."""
         parser = reqparse.RequestParser()
@@ -47,6 +50,8 @@ class LoginApi(Resource):
         parser.add_argument("invite_token", type=str, required=False, default=None, location="json")
         parser.add_argument("language", type=str, required=False, default="en-US", location="json")
         args = parser.parse_args()
+
+        g.current_user_email = args["email"]
 
         if dify_config.BILLING_ENABLED and BillingService.is_email_in_freeze(args["email"]):
             raise AccountInFreezeError()
@@ -84,6 +89,10 @@ class LoginApi(Resource):
                 return {"result": "fail", "data": token, "code": "account_not_found"}
             else:
                 raise AccountNotFound()
+        
+        # set current account of the global object g
+        g.current_account = account
+
         # SELF_HOSTED only have one workspace
         tenants = TenantService.get_join_tenants(account)
         if len(tenants) == 0:
@@ -99,6 +108,7 @@ class LoginApi(Resource):
 
 class LogoutApi(Resource):
     @setup_required
+    @audit_log(action_type=AuditActionType.LOGOUT, action_details="User logout")
     def get(self):
         account = cast(Account, flask_login.current_user)
         if isinstance(account, flask_login.AnonymousUserMixin):

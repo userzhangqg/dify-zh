@@ -13,6 +13,8 @@ from core.model_runtime.utils.encoders import jsonable_encoder
 from libs.login import login_required
 from services.billing_service import BillingService
 from services.model_provider_service import ModelProviderService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class ModelProviderListApi(Resource):
@@ -56,6 +58,7 @@ class ModelProviderValidateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PostModelProviderValidateApi")
     def post(self, provider: str):
         parser = reqparse.RequestParser()
         parser.add_argument("credentials", type=dict, required=True, nullable=False, location="json")
@@ -88,6 +91,7 @@ class ModelProviderApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostModelProviderApi", catch_exceptions=[Forbidden])
     def post(self, provider: str):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -110,6 +114,7 @@ class ModelProviderApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteModelProviderApi", catch_exceptions=[Forbidden])
     def delete(self, provider: str):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -141,6 +146,7 @@ class PreferredProviderTypeUpdateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostPreferredProviderTypeUpdateApi", catch_exceptions=[Forbidden])
     def post(self, provider: str):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -187,6 +193,7 @@ class ModelProviderFreeQuotaSubmitApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PostModelProviderFreeQuotaSubmitApi")
     def post(self, provider: str):
         model_provider_service = ModelProviderService()
         result = model_provider_service.free_quota_submit(tenant_id=current_user.current_tenant_id, provider=provider)

@@ -18,6 +18,8 @@ from services.tools.builtin_tools_manage_service import BuiltinToolManageService
 from services.tools.tool_labels_service import ToolLabelsService
 from services.tools.tools_manage_service import ToolCommonService
 from services.tools.workflow_tools_manage_service import WorkflowToolManageService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class ToolProviderListApi(Resource):
@@ -63,6 +65,7 @@ class ToolBuiltinProviderDeleteApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostToolBuiltinProviderDeleteApi", catch_exceptions=[Forbidden])
     def post(self, provider):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -81,6 +84,7 @@ class ToolBuiltinProviderUpdateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostToolBuiltinProviderUpdateApi", catch_exceptions=[Forbidden])
     def post(self, provider):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -130,6 +134,7 @@ class ToolApiProviderAddApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostToolApiProviderAddApi", catch_exceptions=[Forbidden])
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -208,6 +213,7 @@ class ToolApiProviderUpdateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostToolApiProviderUpdateApi", catch_exceptions=[Forbidden])
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -247,6 +253,7 @@ class ToolApiProviderDeleteApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostToolApiProviderDeleteApi", catch_exceptions=[Forbidden])
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -316,6 +323,7 @@ class ToolApiProviderPreviousTestApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PostToolApiProviderPreviousTestApi")
     def post(self):
         parser = reqparse.RequestParser()
 
@@ -343,6 +351,7 @@ class ToolWorkflowProviderCreateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostToolWorkflowProviderCreateApi", catch_exceptions=[Forbidden])
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -380,6 +389,7 @@ class ToolWorkflowProviderUpdateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostToolWorkflowProviderUpdateApi", catch_exceptions=[Forbidden])
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -420,6 +430,7 @@ class ToolWorkflowProviderDeleteApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostToolWorkflowProviderDeleteApi", catch_exceptions=[Forbidden])
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()

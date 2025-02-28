@@ -18,6 +18,8 @@ from fields.annotation_fields import (
 )
 from libs.login import login_required
 from services.annotation_service import AppAnnotationService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class AnnotationReplyActionApi(Resource):
@@ -25,6 +27,7 @@ class AnnotationReplyActionApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("annotation")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAnnotationReplyActionApi", catch_exceptions=[Forbidden])
     def post(self, app_id, action):
         if not current_user.is_editor:
             raise Forbidden()
@@ -48,6 +51,7 @@ class AppAnnotationSettingDetailApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetAppAnnotationSettingDetailApi", catch_exceptions=[Forbidden])
     def get(self, app_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -61,6 +65,7 @@ class AppAnnotationSettingUpdateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppAnnotationSettingUpdateApi", catch_exceptions=[Forbidden])
     def post(self, app_id, annotation_setting_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -81,6 +86,7 @@ class AnnotationReplyActionStatusApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("annotation")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetAnnotationReplyActionStatusApi", catch_exceptions=[Forbidden])
     def get(self, app_id, job_id, action):
         if not current_user.is_editor:
             raise Forbidden()
@@ -104,6 +110,7 @@ class AnnotationListApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetAnnotationListApi", catch_exceptions=[Forbidden])
     def get(self, app_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -128,6 +135,7 @@ class AnnotationExportApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetAnnotationExportApi", catch_exceptions=[Forbidden])
     def get(self, app_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -144,6 +152,7 @@ class AnnotationCreateApi(Resource):
     @account_initialization_required
     @cloud_edition_billing_resource_check("annotation")
     @marshal_with(annotation_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAnnotationCreateApi", catch_exceptions=[Forbidden])
     def post(self, app_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -163,6 +172,7 @@ class AnnotationUpdateDeleteApi(Resource):
     @account_initialization_required
     @cloud_edition_billing_resource_check("annotation")
     @marshal_with(annotation_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAnnotationUpdateDeleteApi", catch_exceptions=[Forbidden])
     def post(self, app_id, annotation_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -179,6 +189,7 @@ class AnnotationUpdateDeleteApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteAnnotationUpdateDeleteApi", catch_exceptions=[Forbidden])
     def delete(self, app_id, annotation_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -194,6 +205,7 @@ class AnnotationBatchImportApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("annotation")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAnnotationBatchImportApi", catch_exceptions=[Forbidden])
     def post(self, app_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -218,6 +230,7 @@ class AnnotationBatchImportStatusApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("annotation")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetAnnotationBatchImportStatusApi", catch_exceptions=[Forbidden])
     def get(self, app_id, job_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -240,6 +253,7 @@ class AnnotationHitHistoryListApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetAnnotationHitHistoryListApi", catch_exceptions=[Forbidden])
     def get(self, app_id, annotation_id):
         if not current_user.is_editor:
             raise Forbidden()

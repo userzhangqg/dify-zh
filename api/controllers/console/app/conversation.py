@@ -23,6 +23,8 @@ from libs.helper import DatetimeString
 from libs.login import login_required
 from models import Conversation, EndUser, Message, MessageAnnotation
 from models.model import AppMode
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class CompletionConversationApi(Resource):
@@ -31,6 +33,7 @@ class CompletionConversationApi(Resource):
     @account_initialization_required
     @get_app_model(mode=AppMode.COMPLETION)
     @marshal_with(conversation_pagination_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetCompletionConversationApi", catch_exceptions=[Forbidden])
     def get(self, app_model):
         if not current_user.is_editor:
             raise Forbidden()
@@ -102,6 +105,7 @@ class CompletionConversationDetailApi(Resource):
     @account_initialization_required
     @get_app_model(mode=AppMode.COMPLETION)
     @marshal_with(conversation_message_detail_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetCompletionConversationDetailApi", catch_exceptions=[Forbidden])
     def get(self, app_model, conversation_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -113,6 +117,7 @@ class CompletionConversationDetailApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteCompletionConversationDetailApi", catch_exceptions=[Forbidden])
     def delete(self, app_model, conversation_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -139,6 +144,7 @@ class ChatConversationApi(Resource):
     @account_initialization_required
     @get_app_model(mode=[AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT])
     @marshal_with(conversation_with_summary_pagination_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetChatConversationApi", catch_exceptions=[Forbidden])
     def get(self, app_model):
         if not current_user.is_editor:
             raise Forbidden()
@@ -267,6 +273,7 @@ class ChatConversationDetailApi(Resource):
     @account_initialization_required
     @get_app_model(mode=[AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT])
     @marshal_with(conversation_detail_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetChatConversationDetailApi", catch_exceptions=[Forbidden])
     def get(self, app_model, conversation_id):
         if not current_user.is_editor:
             raise Forbidden()
@@ -278,6 +285,7 @@ class ChatConversationDetailApi(Resource):
     @login_required
     @get_app_model(mode=[AppMode.CHAT, AppMode.AGENT_CHAT, AppMode.ADVANCED_CHAT])
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteChatConversationDetailApi", catch_exceptions=[Forbidden])
     def delete(self, app_model, conversation_id):
         if not current_user.is_editor:
             raise Forbidden()

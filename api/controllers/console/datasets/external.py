@@ -13,6 +13,8 @@ from services.dataset_service import DatasetService
 from services.external_knowledge_service import ExternalDatasetService
 from services.hit_testing_service import HitTestingService
 from services.knowledge_service import ExternalDatasetTestService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 def _validate_name(name):
@@ -51,6 +53,7 @@ class ExternalApiTemplateListApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostExternalApiTemplateListApi", catch_exceptions=[Forbidden])
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument(
@@ -133,6 +136,7 @@ class ExternalApiTemplateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteExternalApiTemplateApi", catch_exceptions=[Forbidden])
     def delete(self, external_knowledge_api_id):
         external_knowledge_api_id = str(external_knowledge_api_id)
 
@@ -161,6 +165,7 @@ class ExternalDatasetCreateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostExternalDatasetCreateApi", catch_exceptions=[Forbidden])
     def post(self):
         # The role of the current user in the ta table must be admin, owner, or editor
         if not current_user.is_editor:

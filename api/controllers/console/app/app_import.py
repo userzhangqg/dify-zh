@@ -14,6 +14,8 @@ from fields.app_fields import app_import_fields
 from libs.login import login_required
 from models import Account
 from services.app_dsl_service import AppDslService, ImportStatus
+from models.audit_log import AuditActionType
+from core.audit.audit import audit_log
 
 
 class AppImportApi(Resource):
@@ -21,6 +23,7 @@ class AppImportApi(Resource):
     @login_required
     @account_initialization_required
     @marshal_with(app_import_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppImportApi", catch_exceptions=[Forbidden])
     def post(self):
         # Check user role first
         if not current_user.is_editor:
@@ -71,6 +74,7 @@ class AppImportConfirmApi(Resource):
     @login_required
     @account_initialization_required
     @marshal_with(app_import_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppImportConfirmApi", catch_exceptions=[Forbidden])
     def post(self, import_id):
         # Check user role first
         if not current_user.is_editor:

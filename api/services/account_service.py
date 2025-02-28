@@ -8,6 +8,7 @@ from datetime import UTC, datetime, timedelta
 from hashlib import sha256
 from typing import Any, Optional, cast
 
+from flask import request
 from pydantic import BaseModel
 from sqlalchemy import func
 from werkzeug.exceptions import Unauthorized
@@ -358,6 +359,10 @@ class AccountService:
         refresh_token = _generate_refresh_token()
 
         AccountService._store_refresh_token(refresh_token, account.id)
+
+        # Set user ID to request context for audit logging
+        # if (not hasattr(request, 'user_id')) or (not getattr(request, 'user_id')):
+        #     request.user_id = account.id
 
         return TokenPair(access_token=access_token, refresh_token=refresh_token)
 

@@ -1,5 +1,7 @@
 from typing import Any
 
+from models.audit_log import AuditActionType
+from core.audit.audit import audit_log
 import flask_restful  # type: ignore
 from flask_login import current_user  # type: ignore
 from flask_restful import Resource, fields, marshal_with
@@ -56,6 +58,7 @@ class BaseApiKeyListResource(Resource):
         return {"items": keys}
 
     @marshal_with(api_key_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostBaseApiKeyListResource", catch_exceptions=[Forbidden])
     def post(self, resource_id):
         assert self.resource_id_field is not None, "resource_id_field must be set"
         resource_id = str(resource_id)
@@ -94,6 +97,7 @@ class BaseApiKeyResource(Resource):
     resource_model: Any = None
     resource_id_field: str | None = None
 
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteBaseApiKeyResource", catch_exceptions=[Forbidden])
     def delete(self, resource_id, api_key_id):
         assert self.resource_id_field is not None, "resource_id_field must be set"
         resource_id = str(resource_id)

@@ -9,6 +9,8 @@ from fields.tag_fields import tag_fields
 from libs.login import login_required
 from models.model import Tag
 from services.tag_service import TagService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 def _validate_name(name):
@@ -32,6 +34,7 @@ class TagListApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostTagListApi", catch_exceptions=[Forbidden])
     def post(self):
         # The role of the current user in the ta table must be admin, owner, or editor
         if not (current_user.is_editor or current_user.is_dataset_editor):
@@ -56,6 +59,7 @@ class TagUpdateDeleteApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PatchTagUpdateDeleteApi", catch_exceptions=[Forbidden])
     def patch(self, tag_id):
         tag_id = str(tag_id)
         # The role of the current user in the ta table must be admin, owner, or editor
@@ -78,6 +82,7 @@ class TagUpdateDeleteApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteTagUpdateDeleteApi", catch_exceptions=[Forbidden])
     def delete(self, tag_id):
         tag_id = str(tag_id)
         # The role of the current user in the ta table must be admin, owner, or editor
@@ -93,6 +98,7 @@ class TagBindingCreateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostTagBindingCreateApi", catch_exceptions=[Forbidden])
     def post(self):
         # The role of the current user in the ta table must be admin, owner, editor, or dataset_operator
         if not (current_user.is_editor or current_user.is_dataset_editor):
@@ -118,6 +124,7 @@ class TagBindingDeleteApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostTagBindingDeleteApi", catch_exceptions=[Forbidden])
     def post(self):
         # The role of the current user in the ta table must be admin, owner, editor, or dataset_operator
         if not (current_user.is_editor or current_user.is_dataset_editor):

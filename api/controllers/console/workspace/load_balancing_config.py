@@ -8,12 +8,15 @@ from core.model_runtime.errors.validate import CredentialsValidateFailedError
 from libs.login import current_user, login_required
 from models.account import TenantAccountRole
 from services.model_load_balancing_service import ModelLoadBalancingService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class LoadBalancingCredentialsValidateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostLoadBalancingCredentialsValidateApi", catch_exceptions=[Forbidden])
     def post(self, provider: str):
         if not TenantAccountRole.is_privileged_role(current_user.current_tenant.current_role):
             raise Forbidden()
@@ -63,6 +66,7 @@ class LoadBalancingConfigCredentialsValidateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostLoadBalancingConfigCredentialsValidateApi", catch_exceptions=[Forbidden])
     def post(self, provider: str, config_id: str):
         if not TenantAccountRole.is_privileged_role(current_user.current_tenant.current_role):
             raise Forbidden()

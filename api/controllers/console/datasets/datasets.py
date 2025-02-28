@@ -26,7 +26,8 @@ from libs.login import login_required
 from models import ApiToken, Dataset, Document, DocumentSegment, UploadFile
 from models.dataset import DatasetPermissionEnum
 from services.dataset_service import DatasetPermissionService, DatasetService, DocumentService
-
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 def _validate_name(name):
     if not name or len(name) < 1 or len(name) > 40:
@@ -93,6 +94,7 @@ class DatasetListApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDatasetListApi", catch_exceptions=[Forbidden])
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument(
@@ -310,6 +312,7 @@ class DatasetApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteDatasetApi", catch_exceptions=[Forbidden])
     def delete(self, dataset_id):
         dataset_id_str = str(dataset_id)
 
@@ -543,6 +546,7 @@ class DatasetApiKeyApi(Resource):
     @login_required
     @account_initialization_required
     @marshal_with(api_key_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDatasetApiKeyApi", catch_exceptions=[Forbidden])
     def post(self):
         # The role of the current user in the ta table must be admin or owner
         if not current_user.is_admin_or_owner:
@@ -577,6 +581,7 @@ class DatasetApiDeleteApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteDatasetApiDeleteApi", catch_exceptions=[Forbidden])
     def delete(self, api_key_id):
         api_key_id = str(api_key_id)
 

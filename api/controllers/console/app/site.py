@@ -12,6 +12,8 @@ from extensions.ext_database import db
 from fields.app_fields import app_site_fields
 from libs.login import login_required
 from models import Site
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 def parse_app_site_args():
@@ -43,6 +45,7 @@ class AppSite(Resource):
     @account_initialization_required
     @get_app_model
     @marshal_with(app_site_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppSite", catch_exceptions=[Forbidden])
     def post(self, app_model):
         args = parse_app_site_args()
 
@@ -87,6 +90,7 @@ class AppSiteAccessTokenReset(Resource):
     @account_initialization_required
     @get_app_model
     @marshal_with(app_site_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppSiteAccessTokenReset", catch_exceptions=[Forbidden])
     def post(self, app_model):
         # The role of the current user in the ta table must be admin or owner
         if not current_user.is_admin_or_owner:

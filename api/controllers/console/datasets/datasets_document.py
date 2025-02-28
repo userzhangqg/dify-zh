@@ -55,6 +55,8 @@ from services.dataset_service import DatasetService, DocumentService
 from services.entities.knowledge_entities.knowledge_entities import KnowledgeConfig
 from tasks.add_document_to_index_task import add_document_to_index_task
 from tasks.remove_document_from_index_task import remove_document_from_index_task
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class DocumentResource(Resource):
@@ -230,6 +232,7 @@ class DatasetDocumentListApi(Resource):
     @account_initialization_required
     @marshal_with(documents_and_batch_fields)
     @cloud_edition_billing_resource_check("vector_space")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDatasetDocumentListApi", catch_exceptions=[Forbidden])
     def post(self, dataset_id):
         dataset_id = str(dataset_id)
 
@@ -308,6 +311,7 @@ class DatasetInitApi(Resource):
     @account_initialization_required
     @marshal_with(dataset_and_document_fields)
     @cloud_edition_billing_resource_check("vector_space")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDatasetInitApi", catch_exceptions=[Forbidden])
     def post(self):
         # The role of the current user in the ta table must be admin, owner, or editor
         if not current_user.is_editor:
@@ -678,6 +682,7 @@ class DocumentProcessingApi(DocumentResource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PatchDocumentProcessingApi", catch_exceptions=[Forbidden])
     def patch(self, dataset_id, document_id, action):
         dataset_id = str(dataset_id)
         document_id = str(document_id)
@@ -737,6 +742,7 @@ class DocumentMetadataApi(DocumentResource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PutDocumentMetadataApi", catch_exceptions=[Forbidden])
     def put(self, dataset_id, document_id):
         dataset_id = str(dataset_id)
         document_id = str(document_id)
@@ -782,6 +788,7 @@ class DocumentStatusApi(DocumentResource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("vector_space")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PatchDocumentStatusApi", catch_exceptions=[Forbidden])
     def patch(self, dataset_id, action):
         dataset_id = str(dataset_id)
         dataset = DatasetService.get_dataset(dataset_id)
@@ -981,6 +988,7 @@ class DocumentRenameApi(DocumentResource):
     @login_required
     @account_initialization_required
     @marshal_with(document_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDocumentRenameApi", catch_exceptions=[Forbidden])
     def post(self, dataset_id, document_id):
         # The role of the current user in the ta table must be admin, owner, editor, or dataset_operator
         if not current_user.is_dataset_editor:

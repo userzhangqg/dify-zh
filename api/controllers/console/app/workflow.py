@@ -24,6 +24,8 @@ from models.model import AppMode
 from services.app_generate_service import AppGenerateService
 from services.errors.app import WorkflowHashNotEqualError
 from services.workflow_service import WorkflowService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +36,7 @@ class DraftWorkflowApi(Resource):
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT, AppMode.WORKFLOW])
     @marshal_with(workflow_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetDraftWorkflowApi", catch_exceptions=[Forbidden])
     def get(self, app_model: App):
         """
         Get draft workflow
@@ -56,6 +59,7 @@ class DraftWorkflowApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT, AppMode.WORKFLOW])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDraftWorkflowApi", catch_exceptions=[Forbidden])
     def post(self, app_model: App):
         """
         Sync draft workflow
@@ -131,6 +135,7 @@ class AdvancedChatDraftWorkflowRunApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAdvancedChatDraftWorkflowRunApi", catch_exceptions=[Forbidden])
     def post(self, app_model: App):
         """
         Run draft workflow
@@ -170,6 +175,7 @@ class AdvancedChatDraftRunIterationNodeApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAdvancedChatDraftRunIterationNodeApi", catch_exceptions=[Forbidden])
     def post(self, app_model: App, node_id: str):
         """
         Run draft workflow iteration node
@@ -204,6 +210,7 @@ class WorkflowDraftRunIterationNodeApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.WORKFLOW])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostWorkflowDraftRunIterationNodeApi", catch_exceptions=[Forbidden])
     def post(self, app_model: App, node_id: str):
         """
         Run draft workflow iteration node
@@ -238,6 +245,7 @@ class DraftWorkflowRunApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.WORKFLOW])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDraftWorkflowRunApi", catch_exceptions=[Forbidden])
     def post(self, app_model: App):
         """
         Run draft workflow
@@ -267,6 +275,7 @@ class WorkflowTaskStopApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT, AppMode.WORKFLOW])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostWorkflowTaskStopApi", catch_exceptions=[Forbidden])
     def post(self, app_model: App, task_id: str):
         """
         Stop workflow task
@@ -286,6 +295,7 @@ class DraftWorkflowNodeRunApi(Resource):
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT, AppMode.WORKFLOW])
     @marshal_with(workflow_run_node_execution_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDraftWorkflowNodeRunApi", catch_exceptions=[Forbidden])
     def post(self, app_model: App, node_id: str):
         """
         Run draft workflow node
@@ -312,6 +322,7 @@ class PublishedWorkflowApi(Resource):
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT, AppMode.WORKFLOW])
     @marshal_with(workflow_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetPublishedWorkflowApi", catch_exceptions=[Forbidden])
     def get(self, app_model: App):
         """
         Get published workflow
@@ -331,6 +342,7 @@ class PublishedWorkflowApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT, AppMode.WORKFLOW])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostPublishedWorkflowApi", catch_exceptions=[Forbidden])
     def post(self, app_model: App):
         """
         Publish workflow
@@ -350,6 +362,7 @@ class DefaultBlockConfigsApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT, AppMode.WORKFLOW])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetDefaultBlockConfigsApi", catch_exceptions=[Forbidden])
     def get(self, app_model: App):
         """
         Get default block config
@@ -368,6 +381,7 @@ class DefaultBlockConfigApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT, AppMode.WORKFLOW])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetDefaultBlockConfigApi", catch_exceptions=[Forbidden])
     def get(self, app_model: App, block_type: str):
         """
         Get default block config
@@ -397,6 +411,7 @@ class ConvertToWorkflowApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model(mode=[AppMode.CHAT, AppMode.COMPLETION])
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostConvertToWorkflowApi", catch_exceptions=[Forbidden])
     def post(self, app_model: App):
         """
         Convert basic mode of chatbot app to workflow mode
@@ -446,6 +461,7 @@ class PublishedAllWorkflowApi(Resource):
     @account_initialization_required
     @get_app_model(mode=[AppMode.ADVANCED_CHAT, AppMode.WORKFLOW])
     @marshal_with(workflow_pagination_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetPublishedAllWorkflowApi", catch_exceptions=[Forbidden])
     def get(self, app_model: App):
         """
         Get published workflows

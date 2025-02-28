@@ -9,6 +9,7 @@ from .account import (
     TenantAccountRole,
     TenantStatus,
 )
+from .audit_log import AuditLog
 from .api_based_extension import APIBasedExtension, APIBasedExtensionPoint
 from .dataset import (
     AppDatasetJoin,
@@ -184,4 +185,5 @@ __all__ = [
     "WorkflowToolProvider",
     "WorkflowType",
     "db",
+    "AuditLog",
 ]

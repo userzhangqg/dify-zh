@@ -6,6 +6,8 @@ from controllers.console import api
 from controllers.console.auth.error import ApiKeyAuthFailedError
 from libs.login import login_required
 from services.auth.api_key_auth_service import ApiKeyAuthService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 from ..wraps import account_initialization_required, setup_required
 
@@ -37,6 +39,7 @@ class ApiKeyAuthDataSourceBinding(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostApiKeyAuthDataSourceBinding", catch_exceptions=[Forbidden])
     def post(self):
         # The role of the current user in the table must be admin or owner
         if not current_user.is_admin_or_owner:
@@ -58,6 +61,7 @@ class ApiKeyAuthDataSourceBindingDelete(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteApiKeyAuthDataSourceBindingDelete", catch_exceptions=[Forbidden])
     def delete(self, binding_id):
         # The role of the current user in the table must be admin or owner
         if not current_user.is_admin_or_owner:

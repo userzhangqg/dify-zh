@@ -1,5 +1,7 @@
 from typing import Literal
 
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 from flask import request
 from flask_login import current_user  # type: ignore
 from flask_restful import Resource, marshal_with  # type: ignore
@@ -48,6 +50,7 @@ class FileApi(Resource):
     @account_initialization_required
     @marshal_with(file_fields)
     @cloud_edition_billing_resource_check("documents")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostFileApi", catch_exceptions=[Forbidden])
     def post(self):
         file = request.files["file"]
         source_str = request.form.get("source")

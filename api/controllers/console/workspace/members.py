@@ -17,6 +17,8 @@ from libs.login import login_required
 from models.account import Account, TenantAccountRole
 from services.account_service import RegisterService, TenantService
 from services.errors.account import AccountAlreadyInTenantError
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class MemberListApi(Resource):
@@ -38,6 +40,7 @@ class MemberInviteEmailApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("members")
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PostMemberInviteEmailApi")
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument("emails", type=str, required=True, location="json", action="append")
@@ -87,6 +90,7 @@ class MemberCancelInviteApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="DeleteMemberCancelInviteApi")
     def delete(self, member_id):
         member = db.session.query(Account).filter(Account.id == str(member_id)).first()
         if member is None:
@@ -112,6 +116,7 @@ class MemberUpdateRoleApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.PERMISSION_CHANGE, action_details="PutMemberUpdateRoleApi")
     def put(self, member_id):
         parser = reqparse.RequestParser()
         parser.add_argument("role", type=str, required=True, location="json")

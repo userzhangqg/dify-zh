@@ -10,6 +10,8 @@ from configs import dify_config
 from controllers.console import api
 from libs.login import login_required
 from libs.oauth_data_source import NotionOAuth
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 from ..wraps import account_initialization_required, setup_required
 
@@ -27,6 +29,7 @@ def get_oauth_providers():
 
 
 class OAuthDataSource(Resource):
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetOAuthDataSource", catch_exceptions=[Forbidden])
     def get(self, provider: str):
         # The role of the current user in the table must be admin or owner
         if not current_user.is_admin_or_owner:

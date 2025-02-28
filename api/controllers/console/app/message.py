@@ -32,6 +32,8 @@ from services.annotation_service import AppAnnotationService
 from services.errors.conversation import ConversationNotExistsError
 from services.errors.message import MessageNotExistsError, SuggestedQuestionsAfterAnswerDisabledError
 from services.message_service import MessageService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class ChatMessageListApi(Resource):
@@ -162,6 +164,7 @@ class MessageAnnotationApi(Resource):
     @cloud_edition_billing_resource_check("annotation")
     @get_app_model
     @marshal_with(annotation_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostMessageAnnotationApi", catch_exceptions=[Forbidden])
     def post(self, app_model):
         if not current_user.is_editor:
             raise Forbidden()

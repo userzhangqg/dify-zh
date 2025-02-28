@@ -34,6 +34,8 @@ from services.entities.knowledge_entities.knowledge_entities import ChildChunkUp
 from services.errors.chunk import ChildChunkDeleteIndexError as ChildChunkDeleteIndexServiceError
 from services.errors.chunk import ChildChunkIndexingError as ChildChunkIndexingServiceError
 from tasks.batch_create_segment_to_index_task import batch_create_segment_to_index_task
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class DatasetDocumentSegmentListApi(Resource):
@@ -106,6 +108,7 @@ class DatasetDocumentSegmentListApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteDatasetDocumentSegmentListApi", catch_exceptions=[Forbidden])
     def delete(self, dataset_id, document_id):
         # check dataset
         dataset_id = str(dataset_id)
@@ -137,6 +140,7 @@ class DatasetDocumentSegmentApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("vector_space")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PatchDatasetDocumentSegmentApi", catch_exceptions=[Forbidden])
     def patch(self, dataset_id, document_id, action):
         dataset_id = str(dataset_id)
         dataset = DatasetService.get_dataset(dataset_id)
@@ -191,6 +195,7 @@ class DatasetDocumentSegmentAddApi(Resource):
     @account_initialization_required
     @cloud_edition_billing_resource_check("vector_space")
     @cloud_edition_billing_knowledge_limit_check("add_segment")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDatasetDocumentSegmentAddApi", catch_exceptions=[Forbidden])
     def post(self, dataset_id, document_id):
         # check dataset
         dataset_id = str(dataset_id)
@@ -240,6 +245,7 @@ class DatasetDocumentSegmentUpdateApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("vector_space")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PatchDatasetDocumentSegmentUpdateApi", catch_exceptions=[Forbidden])
     def patch(self, dataset_id, document_id, segment_id):
         # check dataset
         dataset_id = str(dataset_id)
@@ -299,6 +305,7 @@ class DatasetDocumentSegmentUpdateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteDatasetDocumentSegmentUpdateApi", catch_exceptions=[Forbidden])
     def delete(self, dataset_id, document_id, segment_id):
         # check dataset
         dataset_id = str(dataset_id)
@@ -402,6 +409,7 @@ class ChildChunkAddApi(Resource):
     @account_initialization_required
     @cloud_edition_billing_resource_check("vector_space")
     @cloud_edition_billing_knowledge_limit_check("add_segment")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostChildChunkAddApi", catch_exceptions=[Forbidden])
     def post(self, dataset_id, document_id, segment_id):
         # check dataset
         dataset_id = str(dataset_id)
@@ -499,6 +507,7 @@ class ChildChunkAddApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("vector_space")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PatchChildChunkAddApi", catch_exceptions=[Forbidden])
     def patch(self, dataset_id, document_id, segment_id):
         # check dataset
         dataset_id = str(dataset_id)
@@ -542,6 +551,7 @@ class ChildChunkUpdateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteChildChunkUpdateApi", catch_exceptions=[Forbidden])
     def delete(self, dataset_id, document_id, segment_id, child_chunk_id):
         # check dataset
         dataset_id = str(dataset_id)
@@ -586,6 +596,7 @@ class ChildChunkUpdateApi(Resource):
     @login_required
     @account_initialization_required
     @cloud_edition_billing_resource_check("vector_space")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PatchChildChunkUpdateApi", catch_exceptions=[Forbidden])
     def patch(self, dataset_id, document_id, segment_id, child_chunk_id):
         # check dataset
         dataset_id = str(dataset_id)

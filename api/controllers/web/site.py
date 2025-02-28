@@ -9,6 +9,8 @@ from libs.helper import AppIconUrlField
 from models.account import TenantStatus
 from models.model import Site
 from services.feature_service import FeatureService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class AppSiteApi(WebApiResource):
@@ -54,6 +56,7 @@ class AppSiteApi(WebApiResource):
     }
 
     @marshal_with(app_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetAppSiteApi", catch_exceptions=[Forbidden])
     def get(self, app_model, end_user):
         """Retrieve app site info."""
         # get site

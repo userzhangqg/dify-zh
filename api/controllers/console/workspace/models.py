@@ -12,6 +12,8 @@ from core.model_runtime.utils.encoders import jsonable_encoder
 from libs.login import login_required
 from services.model_load_balancing_service import ModelLoadBalancingService
 from services.model_provider_service import ModelProviderService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 class DefaultModelApi(Resource):
@@ -42,6 +44,7 @@ class DefaultModelApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostDefaultModelApi", catch_exceptions=[Forbidden])
     def post(self):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -96,6 +99,7 @@ class ModelProviderModelApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostModelProviderModelApi", catch_exceptions=[Forbidden])
     def post(self, provider: str):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -170,6 +174,7 @@ class ModelProviderModelApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteModelProviderModelApi", catch_exceptions=[Forbidden])
     def delete(self, provider: str):
         if not current_user.is_admin_or_owner:
             raise Forbidden()
@@ -235,6 +240,7 @@ class ModelProviderModelEnableApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PatchModelProviderModelEnableApi")
     def patch(self, provider: str):
         tenant_id = current_user.current_tenant_id
 
@@ -262,6 +268,7 @@ class ModelProviderModelDisableApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PatchModelProviderModelDisableApi")
     def patch(self, provider: str):
         tenant_id = current_user.current_tenant_id
 
@@ -289,6 +296,7 @@ class ModelProviderModelValidateApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.SYSTEM_MANAGEMENT, action_details="PostModelProviderModelValidateApi")
     def post(self, provider: str):
         tenant_id = current_user.current_tenant_id
 

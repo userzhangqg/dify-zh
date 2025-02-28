@@ -26,6 +26,8 @@ from libs.login import login_required
 from models import Account, App
 from services.app_dsl_service import AppDslService, ImportMode
 from services.app_service import AppService
+from models.audit_log import AuditActionType
+from core.audit.audit import audit_log
 
 ALLOW_CREATE_APP_MODES = ["chat", "agent-chat", "advanced-chat", "workflow", "completion"]
 
@@ -74,6 +76,7 @@ class AppListApi(Resource):
     @account_initialization_required
     @marshal_with(app_detail_fields)
     @cloud_edition_billing_resource_check("apps")
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="Create app", catch_exceptions=[Forbidden])
     def post(self):
         """Create app"""
         parser = reqparse.RequestParser()
@@ -118,6 +121,7 @@ class AppApi(Resource):
     @account_initialization_required
     @get_app_model
     @marshal_with(app_detail_fields_with_site)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PutAppApi", catch_exceptions=[Forbidden])
     def put(self, app_model):
         """Update app"""
         # The role of the current user in the ta table must be admin, owner, or editor
@@ -143,6 +147,7 @@ class AppApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="DeleteAppApi", catch_exceptions=[Forbidden])
     def delete(self, app_model):
         """Delete app"""
         # The role of the current user in the ta table must be admin, owner, or editor
@@ -161,6 +166,7 @@ class AppCopyApi(Resource):
     @account_initialization_required
     @get_app_model
     @marshal_with(app_detail_fields_with_site)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppCopyApi", catch_exceptions=[Forbidden])
     def post(self, app_model):
         """Copy app"""
         # The role of the current user in the ta table must be admin, owner, or editor
@@ -202,6 +208,7 @@ class AppExportApi(Resource):
     @login_required
     @account_initialization_required
     @get_app_model
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="GetAppExportApi", catch_exceptions=[Forbidden])
     def get(self, app_model):
         """Export app"""
         # The role of the current user in the ta table must be admin, owner, or editor
@@ -222,6 +229,7 @@ class AppNameApi(Resource):
     @account_initialization_required
     @get_app_model
     @marshal_with(app_detail_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppNameApi", catch_exceptions=[Forbidden])
     def post(self, app_model):
         # The role of the current user in the ta table must be admin, owner, or editor
         if not current_user.is_editor:
@@ -243,6 +251,7 @@ class AppIconApi(Resource):
     @account_initialization_required
     @get_app_model
     @marshal_with(app_detail_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppIconApi", catch_exceptions=[Forbidden])
     def post(self, app_model):
         # The role of the current user in the ta table must be admin, owner, or editor
         if not current_user.is_editor:
@@ -265,6 +274,7 @@ class AppSiteStatus(Resource):
     @account_initialization_required
     @get_app_model
     @marshal_with(app_detail_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppSiteStatus", catch_exceptions=[Forbidden])
     def post(self, app_model):
         # The role of the current user in the ta table must be admin, owner, or editor
         if not current_user.is_editor:
@@ -286,6 +296,7 @@ class AppApiStatus(Resource):
     @account_initialization_required
     @get_app_model
     @marshal_with(app_detail_fields)
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppApiStatus", catch_exceptions=[Forbidden])
     def post(self, app_model):
         # The role of the current user in the ta table must be admin or owner
         if not current_user.is_admin_or_owner:
@@ -314,6 +325,7 @@ class AppTraceApi(Resource):
     @setup_required
     @login_required
     @account_initialization_required
+    @audit_log(action_type=AuditActionType.UNAUTHORIZED_ACCESS, action_details="PostAppTraceApi", catch_exceptions=[Forbidden])
     def post(self, app_id):
         # add app trace
         if not current_user.is_admin_or_owner:
