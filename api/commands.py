@@ -25,6 +25,8 @@ from models.dataset import Document as DatasetDocument
 from models.model import Account, App, AppAnnotationSetting, AppMode, Conversation, MessageAnnotation
 from models.provider import Provider, ProviderModel
 from services.account_service import RegisterService, TenantService
+from core.audit.audit import audit_log
+from models.audit_log import AuditActionType
 
 
 @click.command("reset-password", help="Reset the account password.")
@@ -653,6 +655,7 @@ where sites.id is null limit 1000"""
 
 @click.command("export-users", help="Export user list and status")
 @click.option("--format", default="csv", help="Export format (csv or excel)")
+@audit_log(action_type=AuditActionType.DATA_EXPORT, action_details="ExportUsers")
 def export_users(format):
     """
     Export user list and status to CSV or Excel file

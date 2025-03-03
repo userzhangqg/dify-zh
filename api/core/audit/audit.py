@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import request
+from flask import request, has_request_context
 from datetime import datetime
 from models.audit_log import AuditLog, AuditActionType, AuditLogCategory
 from extensions.ext_database import db
@@ -26,10 +26,13 @@ def audit_log(action_type: AuditActionType, action_details: str, catch_exception
                 raise e
             finally:
                 if need_audit:
-                    source_ip = request.remote_addr
-                    device_info = request.headers.get('User-Agent', 'Unknown')
+                    source_ip = ''
+                    device_info = ''
                     user_id = None
                     user_email = ''
+                    if has_request_context():
+                        source_ip = request.remote_addr
+                        device_info = request.headers.get('User-Agent', 'Unknown')
 
                     # Get user info 
                     from flask import g
