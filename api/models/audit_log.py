@@ -82,3 +82,17 @@ class AuditLog(db.Model):  # type: ignore[name-defined]
             return AuditLogCategory.DATA_OPERATION
         else:
             return AuditLogCategory.SYSTEM_OPERATION
+
+    def to_dict(self) -> dict:
+        return {
+            'id': str(self.id),
+            'account_id': str(self.account_id) if self.account_id else None,
+            'account_email': self.account_email,
+            'timestamp': self.timestamp.isoformat() if self.timestamp else None,
+            'action_type': self.action_type,
+            'action_details': self.action_details,
+            'success': self.success,
+            'source_ip': self.source_ip,
+            'device_info': self.device_info,
+            'category': self.category
+        }

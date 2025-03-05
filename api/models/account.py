@@ -122,6 +122,10 @@ class Account(UserMixin, db.Model):  # type: ignore[name-defined]
     def is_dataset_operator(self):
         return self._current_tenant.current_role == TenantAccountRole.DATASET_OPERATOR
 
+    @property
+    def is_auditor(self):
+        return self._current_tenant.current_role == TenantAccountRole.AUDITOR
+
 
 class TenantStatus(enum.StrEnum):
     NORMAL = "normal"
@@ -134,6 +138,7 @@ class TenantAccountRole(enum.StrEnum):
     EDITOR = "editor"
     NORMAL = "normal"
     DATASET_OPERATOR = "dataset_operator"
+    AUDITOR = "auditor"
 
     @staticmethod
     def is_valid_role(role: str) -> bool:
@@ -143,6 +148,7 @@ class TenantAccountRole(enum.StrEnum):
             TenantAccountRole.EDITOR,
             TenantAccountRole.NORMAL,
             TenantAccountRole.DATASET_OPERATOR,
+            TenantAccountRole.AUDITOR,
         }
 
     @staticmethod
@@ -160,6 +166,7 @@ class TenantAccountRole(enum.StrEnum):
             TenantAccountRole.EDITOR,
             TenantAccountRole.NORMAL,
             TenantAccountRole.DATASET_OPERATOR,
+            TenantAccountRole.AUDITOR,
         }
 
     @staticmethod
@@ -174,6 +181,10 @@ class TenantAccountRole(enum.StrEnum):
             TenantAccountRole.EDITOR,
             TenantAccountRole.DATASET_OPERATOR,
         }
+
+    @staticmethod
+    def is_auditor_role(role: str) -> bool:
+        return role == TenantAccountRole.AUDITOR
 
 
 class Tenant(db.Model):  # type: ignore[name-defined]
@@ -210,6 +221,7 @@ class TenantAccountJoinRole(enum.Enum):
     ADMIN = "admin"
     NORMAL = "normal"
     DATASET_OPERATOR = "dataset_operator"
+    AUDITOR = "auditor"
 
 
 class TenantAccountJoin(db.Model):  # type: ignore[name-defined]
